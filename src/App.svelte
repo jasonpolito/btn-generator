@@ -26,21 +26,32 @@
   });
 </script>
 
-<div class="p-8">
+<label
+  for="default-range"
+  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+  >Default range</label
+>
+<div class="container mx-auto p-8 max-w-3xl">
   <div
     class="flex min-h-[50vh] items-center justify-center rounded border border-slate-100 bg-slate-50 p-16 shadow-inner"
   >
     <button style={inlineStyles}> Howdy Partner! </button>
   </div>
-</div>
 
-<ul>
-  {#each Object.entries(btn) as [key, style]}
-    <li>
-      <label>
-        {style.label}
-        <input type={style.type} bind:value={style.value} />
-      </label>
-    </li>
-  {/each}
-</ul>
+  <ul>
+    {#each Object.entries(btn) as [key, style]}
+      <li>
+        <label>
+          {style.label}
+          <input
+            type={style.type}
+            class={style.type === "range"
+              ? "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              : ""}
+            bind:value={style.value}
+          />
+        </label>
+      </li>
+    {/each}
+  </ul>
+</div>
