@@ -45,7 +45,7 @@
   <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 my-4">
     {#each Object.entries(app.tabs.all) as [key, tab]}
       <li>
-        <Tab {app} {key} label={tab.label} />
+        <Tab bind:app {key} {tab} />
       </li>
     {/each}
   </ul>
