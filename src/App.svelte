@@ -1,5 +1,5 @@
 <script>
-  import Counter from "./lib/Counter.svelte";
+  import Tab from "./lib/Tab.svelte";
   import { stylesObjectToCssMap } from "./import/utils";
   import { appData } from "./import/appData";
   const STORAGE_KEY = "btnData";
@@ -10,10 +10,9 @@
       : JSON.parse(localStorage.getItem(STORAGE_KEY));
 
   let app = $state(initialData);
-  console.log(app);
 
   let inlineStyles = $derived.by(() => {
-    const cssValues = stylesObjectToCssMap(app.variables);
+    const cssValues = stylesObjectToCssMap(app.variables, app.tabs.active);
 
     // convert JSON object to inline style attribute string
     let styleString =
@@ -33,19 +32,20 @@
   <div
     class="flex min-h-[50vh] items-center justify-center rounded border border-slate-100 bg-slate-50 p-16 shadow-inner"
   >
-    <button style={inlineStyles}> Howdy Partner! </button>
+    <div class="relative">
+      <div
+        class="absolute w-full uppercase text-center -top-8 tracking-widest text-slate-300 text-xs"
+      >
+        {app.tabs.active}
+      </div>
+      <button style={inlineStyles}> Howdy Partner! </button>
+    </div>
   </div>
 
   <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 my-4">
     {#each Object.entries(app.tabs.all) as [key, tab]}
       <li>
-        <button
-          onclick={(app.tabs.active = key)}
-          class="inline-block p-4 cursor-pointer rounded-lg {app.tabs.active ===
-          key
-            ? 'text-blue-600 bg-gray-100'
-            : 'hover:text-gray-600 hover:bg-gray-50'}">{tab.label}</button
-        >
+        <Tab {app} {key} label={tab.label} />
       </li>
     {/each}
   </ul>
@@ -54,8 +54,12 @@
     <div class="p-8 shadow-md rounded"></div>
   {/if}
 
-  {#if app.tabs.active === "variables"}
-    <div class="p-8 shadow-md rounded">
+  {#each Object.entries(app.tabs.all) as [key, tab]}
+    <div
+      class="p-8 shadow-md rounded"
+      style="display: {app.tabs.active == key ? 'block' : 'none'}"
+    >
+      <h3>{tab.label}</h3>
       <ul>
         {#each Object.entries(app.variables) as [key, style]}
           <li>
@@ -66,12 +70,12 @@
                 class={style.type === "range"
                   ? "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                   : ""}
-                bind:value={style.value}
+                bind:value={style.value[app.tabs.active]}
               />
             </label>
           </li>
         {/each}
       </ul>
     </div>
-  {/if}
+  {/each}
 </div>

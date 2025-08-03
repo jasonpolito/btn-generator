@@ -1,11 +1,13 @@
-export function stylesObjectToCssMap(styles) {
+export function stylesObjectToCssMap(styles, variant) {
   return Object.entries(styles).reduce((acc, [key, style]) => {
     if (Array.isArray(style.css)) {
       style.css.forEach((cssKey) => {
-        acc[cssKey] = style.value + (style.type === "color" ? "" : "px");
+        acc[cssKey] =
+          style.value[variant ?? "base"] + (style.type === "color" ? "" : "px");
       });
     } else {
-      acc[style.css] = style.value + (style.type === "color" ? "" : "px");
+      acc[style.css] =
+        style.value[variant ?? "base"] + (style.type === "color" ? "" : "px");
     }
     return acc;
   }, {});
