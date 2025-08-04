@@ -13,6 +13,19 @@ export function stylesObjectToCssMap(styles, variant) {
   }, {});
 }
 
+export function groupAppData(app) {
+  const grouped = Object.entries(app.variables).reduce(
+    (acc, [key, variable]) => {
+      const group = variable.group || "Misc"; // handle missing group
+      if (!acc[group]) acc[group] = {};
+      acc[group][key] = variable;
+      return acc;
+    },
+    {}
+  );
+  return grouped;
+}
+
 export function uuidv4() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;

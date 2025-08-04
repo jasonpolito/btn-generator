@@ -1,6 +1,9 @@
 <script>
+  import ColorPicker from "svelte-awesome-color-picker";
   import Tab from "./lib/Tab.svelte";
-  import { stylesObjectToCssMap } from "./import/utils";
+  import Range from "./lib/Range.svelte";
+  import Accordion from "./lib/Accordion.svelte";
+  import { groupAppData, stylesObjectToCssMap } from "./import/utils";
   import { appData } from "./import/appData";
   const STORAGE_KEY = "btnData";
 
@@ -30,7 +33,7 @@
 
 <div class="container mx-auto p-8 max-w-3xl">
   <div
-    class="flex min-h-[50vh] items-center justify-center rounded border border-slate-100 bg-slate-50 p-16 shadow-inner"
+    class="flex items-center justify-center rounded border border-slate-100 bg-slate-50 p-16 shadow-inner"
   >
     <div class="relative">
       <div
@@ -59,23 +62,62 @@
       class="p-8 shadow-md rounded"
       style="display: {app.tabs.active == key ? 'block' : 'none'}"
     >
-      <h3>{tab.label}</h3>
+      <!-- <h3>{tab.label}</h3> -->
       <ul>
-        {#each Object.entries(app.variables) as [key, style]}
+        {#each Object.entries(groupAppData(app)) as [key, data]}
           <li>
-            <label>
-              {style.label}
-              <input
-                type={style.type}
-                class={style.type === "range"
-                  ? "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  : ""}
-                bind:value={style.value[app.tabs.active]}
-              />
-            </label>
+            <Accordion>
+              <span slot="head">{key}</span>
+              <span slot="details">
+                {#each Object.entries(data) as [key, style]}
+                  <label>
+                    {#if style.type === "color"}
+                      <div class="flex">
+                        <label
+                          class="block py-2 px-2.5 mb-2 rounded bg-gray-100"
+                        >
+                          <ColorPicker
+                            label={style.label}
+                            bind:hex={style.value[app.tabs.active]}
+                          />
+                        </label>
+                      </div>
+                    {/if}
+                    {#if style.type !== "color"}
+                      {style.label}
+                      <Range
+                        class={"bg-red-500"}
+                        bind:value={style.value[app.tabs.active]}
+                      />
+                    {/if}
+                  </label>
+                {/each}
+              </span>
+            </Accordion>
           </li>
         {/each}
       </ul>
     </div>
   {/each}
 </div>
+
+<style>
+  :global {
+    input[type="range"] {
+      background: var(--color-gray-100);
+    }
+    .color-picker {
+      input,
+      button {
+        background: var(--color-gray-100);
+      }
+      .color {
+        box-shadow: var(--shadow-sm);
+      }
+      .wrapper {
+        border: none;
+        box-shadow: var(--shadow-sm);
+      }
+    }
+  }
+</style>
